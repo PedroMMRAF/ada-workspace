@@ -119,7 +119,7 @@ public class Solver {
     }
 
     private int getMinOfTimes() {
-        return Math.min(noItemTime, Math.min(harpTime, Math.min(potionTime, cloakTime)));
+        return Math.min(Math.min(noItemTime, harpTime), Math.min(potionTime, cloakTime));
     }
 
     private void addHarpTime(int time) {
