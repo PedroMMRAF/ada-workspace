@@ -1,3 +1,7 @@
+/**
+ * @author Miguel Valido 60477
+ * @author Pedro Fernandes 60694
+ */
 public class Solver {
     private static final char EMPTY_PLOT = 'e';
     private static final char HARP_PLOT = 'h';
@@ -12,7 +16,7 @@ public class Solver {
     private static final int CLOAK_TIME = 6;
     private static final int CROSS_WITH_ITEM_TIME = 3;
 
-    private final char[] plot;
+    private final String plot;
 
     private int noItemTime;
     private int harpTime;
@@ -21,7 +25,7 @@ public class Solver {
 
     private int foundMonster;
 
-    public Solver(char[] plot) {
+    public Solver(String plot) {
         this.plot = plot;
 
         this.noItemTime = 0;
@@ -33,8 +37,8 @@ public class Solver {
     }
 
     public int solve() {
-        for (char c : plot) {
-            switch (c) {
+        for (int i = 0; i < plot.length(); i++) {
+            switch (plot.charAt(i)) {
                 case EMPTY_PLOT -> crossEmptyField();
                 case HARP_PLOT -> crossHarpField();
                 case POTION_PLOT -> crossPotionField();
@@ -44,26 +48,11 @@ public class Solver {
                 case DRAGON_PLOT -> crossDragonField();
             }
         }
-        return getResult();
-    }
-
-    private void addHarpTime(int time) {
-        if (harpTime < Integer.MAX_VALUE)
-            harpTime += time;
-    }
-
-    private void addPotionTime(int time) {
-        if (potionTime < Integer.MAX_VALUE)
-            potionTime += time;
-    }
-
-    private void addCloakTime(int time) {
-        if (cloakTime < Integer.MAX_VALUE)
-            cloakTime += time;
+        return getMinOfTimes();
     }
 
     private void crossEmptyField() {
-        noItemTime = getResult() + 1 + foundMonster;
+        noItemTime = getMinOfTimes() + 1 + foundMonster;
 
         addHarpTime(CROSS_WITH_ITEM_TIME);
         addPotionTime(CROSS_WITH_ITEM_TIME);
@@ -73,7 +62,7 @@ public class Solver {
     }
 
     private void crossHarpField() {
-        noItemTime = getResult() + 1 + foundMonster;
+        noItemTime = getMinOfTimes() + 1 + foundMonster;
         harpTime = noItemTime + 1;
 
         addPotionTime(CROSS_WITH_ITEM_TIME);
@@ -83,7 +72,7 @@ public class Solver {
     }
 
     private void crossPotionField() {
-        noItemTime = getResult() + 1 + foundMonster;
+        noItemTime = getMinOfTimes() + 1 + foundMonster;
         potionTime = noItemTime + 1;
 
         addHarpTime(CROSS_WITH_ITEM_TIME);
@@ -93,7 +82,7 @@ public class Solver {
     }
 
     private void crossCloakField() {
-        noItemTime = getResult() + 1 + foundMonster;
+        noItemTime = getMinOfTimes() + 1 + foundMonster;
         cloakTime = noItemTime + 1;
 
         addHarpTime(CROSS_WITH_ITEM_TIME);
@@ -129,7 +118,22 @@ public class Solver {
         this.foundMonster = 1;
     }
 
-    private int getResult() {
+    private int getMinOfTimes() {
         return Math.min(noItemTime, Math.min(harpTime, Math.min(potionTime, cloakTime)));
+    }
+
+    private void addHarpTime(int time) {
+        if (harpTime < Integer.MAX_VALUE)
+            harpTime += time;
+    }
+
+    private void addPotionTime(int time) {
+        if (potionTime < Integer.MAX_VALUE)
+            potionTime += time;
+    }
+
+    private void addCloakTime(int time) {
+        if (cloakTime < Integer.MAX_VALUE)
+            cloakTime += time;
     }
 }
