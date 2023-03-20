@@ -1,158 +1,135 @@
-
 public class Solver {
-    private static final char EASY_PLOT = 'e';
-    private static final char EASY_PLOT_HARP = 'h';
-    private static final char EASY_PLOT_POTION = 'p';
-    private static final char EASY_PLOT_CLOAK = 'c';
+    private static final char EMPTY_PLOT = 'e';
+    private static final char HARP_PLOT = 'h';
+    private static final char POTION_PLOT = 'p';
+    private static final char CLOAK_PLOT = 'c';
     private static final char DOG_PLOT = '3';
     private static final char TROLL_PLOT = 't';
     private static final char DRAGON_PLOT = 'd';
-    private static final int HARP_TIME = 4;// dog
-    private static final int POTION_TIME = 5;// dog or troll
-    private static final int CLOAK_TIME = 6;// dog, troll or dragon
-    private static final int CROSS_WITH_ITEM_TIME = 3;
-    private static final int NUMBER_OF_MONSTERS = 3;
-    private static final int NO_ITEM_POSITION = 0;
-    private static final int HARP_POSITION = 1;
-    private static final int POTION_POSITION = 2;
-    private static final int CLOAK_POSITION = 3;
 
-    private String plot;
-    private int[] times;
+    private static final int HARP_TIME = 4;
+    private static final int POTION_TIME = 5;
+    private static final int CLOAK_TIME = 6;
+    private static final int CROSS_WITH_ITEM_TIME = 3;
+
+    private final char[] plot;
+
+    private int noItemTime;
+    private int harpTime;
+    private int potionTime;
+    private int cloakTime;
+
     private int foundMonster;
 
-    public Solver(String plot) {
+    public Solver(char[] plot) {
         this.plot = plot;
-        this.times = new int[NUMBER_OF_MONSTERS + 1];// 0 -> No item; 1 -> Harp; 2 -> Potion; 3 -> Cloak;
-        this.foundMonster = 0;
-        initializeTimes();
-    }
 
-    private void initializeTimes() {
-        for (int i = HARP_POSITION; i < times.length; i++)
-            times[i] = Integer.MAX_VALUE;
+        this.noItemTime = 0;
+        this.harpTime = Integer.MAX_VALUE;
+        this.potionTime = Integer.MAX_VALUE;
+        this.cloakTime = Integer.MAX_VALUE;
+
+        this.foundMonster = 0;
     }
 
     public int solve() {
-        for (int i = 0; i < plot.length(); i++) {
-            char c = plot.charAt(i);
-            if (isEmpty(c)) {
-                crossEmptyField();
-            }
-            if (hasHarp(c)) {
-                crossHarpField();
-            }
-
-            if (hasPotion(c)) {
-                crossPotionField();
-            }
-
-            if (hasCloak(c)) {
-                crossCloakField();
-            }
-
-            if (hasDog(c)) {
-                crossDogField();
-            }
-
-            if (hasTroll(c)) {
-                crossTrollField();
-            }
-
-            if (hasDragon(c)) {
-                crossDragonField();
+        for (char c : plot) {
+            switch (c) {
+                case EMPTY_PLOT -> crossEmptyField();
+                case HARP_PLOT -> crossHarpField();
+                case POTION_PLOT -> crossPotionField();
+                case CLOAK_PLOT -> crossCloakField();
+                case DOG_PLOT -> crossDogField();
+                case TROLL_PLOT -> crossTrollField();
+                case DRAGON_PLOT -> crossDragonField();
             }
         }
         return getResult();
     }
 
+    private void addHarpTime(int time) {
+        if (harpTime < Integer.MAX_VALUE)
+            harpTime += time;
+    }
+
+    private void addPotionTime(int time) {
+        if (potionTime < Integer.MAX_VALUE)
+            potionTime += time;
+    }
+
+    private void addCloakTime(int time) {
+        if (cloakTime < Integer.MAX_VALUE)
+            cloakTime += time;
+    }
+
     private void crossEmptyField() {
-        times[NO_ITEM_POSITION] = getResult() + 1 + foundMonster;
-        addTime(HARP_POSITION, CROSS_WITH_ITEM_TIME);
-        addTime(POTION_POSITION, CROSS_WITH_ITEM_TIME);
-        addTime(CLOAK_POSITION, CROSS_WITH_ITEM_TIME);
+        noItemTime = getResult() + 1 + foundMonster;
+
+        addHarpTime(CROSS_WITH_ITEM_TIME);
+        addPotionTime(CROSS_WITH_ITEM_TIME);
+        addCloakTime(CROSS_WITH_ITEM_TIME);
+
         this.foundMonster = 0;
     }
 
     private void crossHarpField() {
-        times[NO_ITEM_POSITION] = getResult() + 1 + foundMonster;
-        times[HARP_POSITION] = times[NO_ITEM_POSITION] + 1;
-        addTime(POTION_POSITION, CROSS_WITH_ITEM_TIME);
-        addTime(CLOAK_POSITION, CROSS_WITH_ITEM_TIME);
+        noItemTime = getResult() + 1 + foundMonster;
+        harpTime = noItemTime + 1;
+
+        addPotionTime(CROSS_WITH_ITEM_TIME);
+        addCloakTime(CROSS_WITH_ITEM_TIME);
+
         this.foundMonster = 0;
     }
 
     private void crossPotionField() {
-        times[NO_ITEM_POSITION] = getResult() + 1 + foundMonster;
-        times[POTION_POSITION] = times[NO_ITEM_POSITION] + 1;
-        addTime(HARP_POSITION, CROSS_WITH_ITEM_TIME);
-        addTime(CLOAK_POSITION, CROSS_WITH_ITEM_TIME);
+        noItemTime = getResult() + 1 + foundMonster;
+        potionTime = noItemTime + 1;
+
+        addHarpTime(CROSS_WITH_ITEM_TIME);
+        addCloakTime(CROSS_WITH_ITEM_TIME);
+
         this.foundMonster = 0;
     }
 
     private void crossCloakField() {
-        times[NO_ITEM_POSITION] = getResult() + 1 + foundMonster;
-        times[CLOAK_POSITION] = times[NO_ITEM_POSITION] + 1;
-        addTime(HARP_POSITION, CROSS_WITH_ITEM_TIME);
-        addTime(POTION_POSITION, CROSS_WITH_ITEM_TIME);
+        noItemTime = getResult() + 1 + foundMonster;
+        cloakTime = noItemTime + 1;
+
+        addHarpTime(CROSS_WITH_ITEM_TIME);
+        addPotionTime(CROSS_WITH_ITEM_TIME);
+
         this.foundMonster = 0;
     }
 
     private void crossDogField() {
-        times[NO_ITEM_POSITION] = Integer.MAX_VALUE;
-        addTime(HARP_POSITION, HARP_TIME);
-        addTime(POTION_POSITION, POTION_TIME);
-        addTime(CLOAK_POSITION, CLOAK_TIME);
+        noItemTime = Integer.MAX_VALUE;
+
+        addHarpTime(HARP_TIME);
+        addPotionTime(POTION_TIME);
+        addCloakTime(CLOAK_TIME);
+
         this.foundMonster = 1;
     }
 
     private void crossTrollField() {
-        times[HARP_POSITION] = times[NO_ITEM_POSITION] = Integer.MAX_VALUE;
-        addTime(POTION_POSITION, POTION_TIME);
-        addTime(CLOAK_POSITION, CLOAK_TIME);
+        harpTime = noItemTime = Integer.MAX_VALUE;
+
+        addPotionTime(POTION_TIME);
+        addCloakTime(CLOAK_TIME);
+
         this.foundMonster = 1;
     }
 
     private void crossDragonField() {
-        times[POTION_POSITION] = times[HARP_POSITION] = times[NO_ITEM_POSITION] = Integer.MAX_VALUE;
-        addTime(CLOAK_POSITION, CLOAK_TIME);
+        potionTime = harpTime = noItemTime = Integer.MAX_VALUE;
+
+        addCloakTime(CLOAK_TIME);
+
         this.foundMonster = 1;
     }
 
-    private void addTime(int pos, int time) {
-        if (times[pos] < Integer.MAX_VALUE)
-            times[pos] += time;
-    }
-
     private int getResult() {
-        return Math.min(times[0], Math.min(times[1], Math.min(times[2], times[3])));
-    }
-
-    private boolean isEmpty(char field) {
-        return field == EASY_PLOT;
-    }
-
-    private boolean hasCloak(char field) {
-        return field == EASY_PLOT_CLOAK;
-    }
-
-    private boolean hasPotion(char field) {
-        return field == EASY_PLOT_POTION;
-    }
-
-    private boolean hasHarp(char field) {
-        return field == EASY_PLOT_HARP;
-    }
-
-    private boolean hasDog(char field) {
-        return field == DOG_PLOT;
-    }
-
-    private boolean hasTroll(char field) {
-        return field == TROLL_PLOT;
-    }
-
-    private boolean hasDragon(char field) {
-        return field == DRAGON_PLOT;
+        return Math.min(noItemTime, Math.min(harpTime, Math.min(potionTime, cloakTime)));
     }
 }
