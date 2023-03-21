@@ -15,7 +15,7 @@ public class Solver {
     private static final int POTION_TIME = 5;
     private static final int CLOAK_TIME = 6;
     private static final int CROSS_WITH_ITEM_TIME = 3;
-
+    private static final int MAX_VALUE = 1000000;
     private final String plot;
 
     private int noItemTime;
@@ -29,9 +29,9 @@ public class Solver {
         this.plot = plot;
 
         this.noItemTime = 0;
-        this.harpTime = Integer.MAX_VALUE;
-        this.potionTime = Integer.MAX_VALUE;
-        this.cloakTime = Integer.MAX_VALUE;
+        this.harpTime = MAX_VALUE;
+        this.potionTime = MAX_VALUE;
+        this.cloakTime = MAX_VALUE;
 
         this.foundMonster = 0;
     }
@@ -54,9 +54,9 @@ public class Solver {
     private void crossEmptyField() {
         noItemTime = getMinOfTimes() + 1 + foundMonster;
 
-        addHarpTime(CROSS_WITH_ITEM_TIME);
-        addPotionTime(CROSS_WITH_ITEM_TIME);
-        addCloakTime(CROSS_WITH_ITEM_TIME);
+        harpTime += CROSS_WITH_ITEM_TIME;
+        potionTime += CROSS_WITH_ITEM_TIME;
+        cloakTime += CROSS_WITH_ITEM_TIME;
 
         this.foundMonster = 0;
     }
@@ -65,8 +65,8 @@ public class Solver {
         noItemTime = getMinOfTimes() + 1 + foundMonster;
         harpTime = noItemTime + 1;
 
-        addPotionTime(CROSS_WITH_ITEM_TIME);
-        addCloakTime(CROSS_WITH_ITEM_TIME);
+        potionTime += CROSS_WITH_ITEM_TIME;
+        cloakTime += CROSS_WITH_ITEM_TIME;
 
         this.foundMonster = 0;
     }
@@ -75,8 +75,8 @@ public class Solver {
         noItemTime = getMinOfTimes() + 1 + foundMonster;
         potionTime = noItemTime + 1;
 
-        addHarpTime(CROSS_WITH_ITEM_TIME);
-        addCloakTime(CROSS_WITH_ITEM_TIME);
+        harpTime += CROSS_WITH_ITEM_TIME;
+        cloakTime += CROSS_WITH_ITEM_TIME;
 
         this.foundMonster = 0;
     }
@@ -85,55 +85,40 @@ public class Solver {
         noItemTime = getMinOfTimes() + 1 + foundMonster;
         cloakTime = noItemTime + 1;
 
-        addHarpTime(CROSS_WITH_ITEM_TIME);
-        addPotionTime(CROSS_WITH_ITEM_TIME);
+        harpTime += CROSS_WITH_ITEM_TIME;
+        potionTime += CROSS_WITH_ITEM_TIME;
 
         this.foundMonster = 0;
     }
 
     private void crossDogField() {
-        noItemTime = Integer.MAX_VALUE;
+        noItemTime = MAX_VALUE;
 
-        addHarpTime(HARP_TIME);
-        addPotionTime(POTION_TIME);
-        addCloakTime(CLOAK_TIME);
+        harpTime += HARP_TIME;
+        potionTime += POTION_TIME;
+        cloakTime += CLOAK_TIME;
 
         this.foundMonster = 1;
     }
 
     private void crossTrollField() {
-        harpTime = noItemTime = Integer.MAX_VALUE;
+        harpTime = noItemTime = MAX_VALUE;
 
-        addPotionTime(POTION_TIME);
-        addCloakTime(CLOAK_TIME);
+        potionTime += POTION_TIME;
+        cloakTime += CLOAK_TIME;
 
         this.foundMonster = 1;
     }
 
     private void crossDragonField() {
-        potionTime = harpTime = noItemTime = Integer.MAX_VALUE;
+        potionTime = harpTime = noItemTime = MAX_VALUE;
 
-        addCloakTime(CLOAK_TIME);
+        cloakTime += CLOAK_TIME;
 
         this.foundMonster = 1;
     }
 
     private int getMinOfTimes() {
         return Math.min(Math.min(noItemTime, harpTime), Math.min(potionTime, cloakTime));
-    }
-
-    private void addHarpTime(int time) {
-        if (harpTime < Integer.MAX_VALUE)
-            harpTime += time;
-    }
-
-    private void addPotionTime(int time) {
-        if (potionTime < Integer.MAX_VALUE)
-            potionTime += time;
-    }
-
-    private void addCloakTime(int time) {
-        if (cloakTime < Integer.MAX_VALUE)
-            cloakTime += time;
     }
 }
