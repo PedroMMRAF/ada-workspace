@@ -31,56 +31,45 @@ def time_it(func):
 
 @time_it
 def recursive(path: str):
-    return _recursive(path, 0, -1)
+    return _recursive(path, -1)
 
 
 @cache
-def _recursive(path: str, total: int, item: int) -> int:
+def _recursive(path: str, item: int) -> int:
     if not path:
-        return total
+        return 0
 
     tile = path[0]
 
     if item == -1:
         if tile == EMPTY:
-            return _recursive(path[1:], total + 1, -1)
+            return 1 + _recursive(path[1:], -1)
 
         elif tile in OBJECTS:
             return min(
-                _recursive(path[1:], total + 2, OBJECTS.index(tile)),
-                _recursive(path[1:], total + 1, -1),
+                2 + _recursive(path[1:], OBJECTS.index(tile)),
+                1 + _recursive(path[1:], -1),
             )
 
         return math.inf
 
     if tile == EMPTY:
         return min(
-            _recursive(path[1:], total + 3, item),
-            _recursive(path[1:], total + 2, -1),
+            3 + _recursive(path[1:], item),
+            2 + _recursive(path[1:], -1),
         )
 
     elif tile in OBJECTS:
         return min(
-            _recursive(path[1:], total + 3, item),
-            _recursive(path[1:], total + 3, OBJECTS.index(tile)),
-            _recursive(path[1:], total + 2, -1),
+            3 + _recursive(path[1:], item),
+            3 + _recursive(path[1:], OBJECTS.index(tile)),
+            2 + _recursive(path[1:], -1),
         )
 
     if item < MONSTERS.index(tile):
         return math.inf
 
-    else:
-        return _recursive(path[1:], total + 4 + item, item)
-
-
-# frame
-# - path
-# - time
-# - item
-# - parent
-# - param
-# - branches
-# - children
+    return 4 + item + _recursive(path[1:], item)
 
 
 @dataclass
@@ -224,15 +213,15 @@ def generate_examples(lines, size, output=sys.stdout):
 def main():
     logging.basicConfig(level=logging.INFO)
 
-    # print(iterative("peecttdhp3e"))
+    print(recursive("peecttdhp3e"))
 
-    with open("test.txt", "w") as fp:
-        generate_examples(10, 10, fp)
-        generate_examples(10, 20, fp)
-        generate_examples(10, 50, fp)
-        generate_examples(10, 100, fp)
-        generate_examples(10, 500, fp)
-        generate_examples(5, 1000, fp)
+    # with open("test.txt", "w") as fp:
+    #     generate_examples(10, 10, fp)
+    #     generate_examples(10, 20, fp)
+    #     generate_examples(10, 50, fp)
+    #     generate_examples(10, 100, fp)
+    #     generate_examples(10, 500, fp)
+    #     generate_examples(5, 1000, fp)
 
     # generate_examples(1, 2500)
     # generate_examples(1, 10000)
