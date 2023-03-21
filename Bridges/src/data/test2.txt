@@ -1,0 +1,13 @@
+1
+5
+a win 1000000
+b mac 5000
+c os2 100
+d mac 1000
+e os2 400
+5
+f max 5000
+g win 1200
+h os2 100
+i mac 50
+j win 1200
