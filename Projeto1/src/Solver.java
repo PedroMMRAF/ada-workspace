@@ -51,15 +51,12 @@ public class Solver {
     }
 
     private void crossEasyPlot(int plotItem) {
-        // We drop any item after finding a monster
         times[NO_ITEM] = getMinOfTimes() + CROSS_PLOT_WITHOUT_ITEM + foundMonster;
 
         for (int item : items)
             if (plotItem == item)
-                // Just picked up the item
                 times[item] = times[NO_ITEM] + 1;
             else
-                // Still had the item
                 times[item] += CROSS_PLOT_WITH_ITEM;
 
         foundMonster = 0;
