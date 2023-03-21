@@ -1,0 +1,70 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Bridges.Main",
+            "projectName": "ada_2a95346a"
+        }
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "LegoBricks.src.Main",
+            "projectName": "ada_2a95346a"
+        },
+        {
+            "type": "java",
+            "name": "Main(1)",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "ada_2a95346a"
+        },
+        {
+            "type": "java",
+            "name": "Fast",
+            "request": "launch",
+            "mainClass": "MaxNumber.src.Fast",
+            "projectName": "ada_2a95346a"
+        },
+        {
+            "type": "java",
+            "name": "Fast2",
+            "request": "launch",
+            "mainClass": "MaxNumber.src.Fast2",
+            "projectName": "ada_2a95346a"
+        },
+        {
+            "type": "java",
+            "name": "Slow",
+            "request": "launch",
+            "mainClass": "MaxNumber.src.Slow",
+            "projectName": "ada_2a95346a"
+        },
+        {
+            "type": "java",
+            "name": "Generate",
+            "request": "launch",
+            "mainClass": "Teoricas.T5.src.Generate",
+            "projectName": "ada_2a95346a"
+        },
+        {
+            "type": "java",
+            "name": "Main(2)",
+            "request": "launch",
+            "mainClass": "Teoricas.T5.src.Main",
+            "projectName": "ada_2a95346a"
+        }
+    ]
+}
