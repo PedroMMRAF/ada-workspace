@@ -6,21 +6,26 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            Integer[] line = readInts(reader);
-            Solver solver = new Solver(line[0], line[1], line[2]);
+            String[] line = reader.readLine().split(" ");
 
-            int precedences = line[3];
+            int lower = Integer.parseInt(line[0]);
+            int upper = Integer.parseInt(line[1]);
+            int employees = Integer.parseInt(line[2]);
+
+            Solver solver = new Solver(lower, upper, employees);
+
+            int precedences = Integer.parseInt(line[3]);
 
             while (precedences-- > 0) {
-                line = readInts(reader);
-                solver.addEdge(line[0], line[1]);
+                line = reader.readLine().split(" ");
+
+                int start = Integer.parseInt(line[0]);
+                int end = Integer.parseInt(line[1]);
+
+                solver.addEdge(start, end);
             }
 
             Arrays.stream(solver.solve()).forEach(System.out::println);
         }
-    }
-
-    private static Integer[] readInts(BufferedReader reader) throws IOException {
-        return (Integer[]) Arrays.stream(reader.readLine().split(" ")).map(Integer::parseInt).toArray();
     }
 }
