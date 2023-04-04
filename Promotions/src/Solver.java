@@ -14,8 +14,8 @@ public class Solver {
         this.upperBound = upper;
         this.employees = employees;
 
-        successors = (List<Integer>[]) new List[employees];
-        predecessors = (List<Integer>[]) new List[employees];
+        successors = new List[employees];
+        predecessors = new List[employees];
 
         for (int i = 0; i < employees; i++) {
             successors[i] = new ArrayList<>();
@@ -65,37 +65,23 @@ public class Solver {
     }
 
     public int[] solve() {
-        int notPromoted = 0;// n vou mm ser promovido ):
-        int promoted = 0;// posso dormir descansado, vou ser promovido (:
+        int notPromoted = 0;
+        int promotedA = 0;
         int promotedB = 0;
 
         for (int i = 0; i < employees; i++) {
             if (allPred(i).size() >= upperBound)
                 notPromoted++;
 
-            int succ = allSucc(i).size();
+            int grade = employees - allSucc(i).size();
 
-            if (succ >= lowerBound)
-                promoted++;
+            if (grade <= lowerBound)
+                promotedA++;
 
-            if (succ >= upperBound)
+            if (grade <= upperBound)
                 promotedB++;
         }
 
-        int promotedFinal = 0;
-        int promotedBFinal = 0;
-
-        for (int i = 0; i < employees; i++) {
-            int succ = allSucc(i).size();
-            int pred = allPred(i).size();
-
-            if (succ >= lowerBound && pred <= lowerBound && pred <= promoted)
-                promotedFinal++;
-
-            if (succ >= upperBound && pred <= upperBound && pred <= promotedB)
-                promotedBFinal++;
-        }
-
-        return new int[] { promotedBFinal, promotedFinal, notPromoted };
+        return new int[] { promotedA, promotedB, notPromoted };
     }
 }
