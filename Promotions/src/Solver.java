@@ -7,7 +7,6 @@ public class Solver {
     private final int lowerBound, upperBound, employees;
 
     private final List<Integer>[] successors, predecessors;
-    private final Set<Integer>[] limSuccessors, limPredecessors;
 
     @SuppressWarnings("unchecked")
     public Solver(int lower, int upper, int employees) {
@@ -17,13 +16,10 @@ public class Solver {
 
         successors = new List[employees];
         predecessors = new List[employees];
-        limSuccessors = new Set[employees];
-        limPredecessors = new Set[employees];
 
         for (int i = 0; i < employees; i++) {
             successors[i] = new ArrayList<>();
             predecessors[i] = new ArrayList<>();
-            limSuccessors[i] = limPredecessors[i] = null;
         }
     }
 
@@ -45,11 +41,6 @@ public class Solver {
     }
 
     public Set<Integer> allPred(int node) {
-        Set<Integer> lim = limPredecessors[node];
-
-        if (lim != null)
-            return lim;
-
         List<Integer> pred = predecessors[node];
         Set<Integer> result = new HashSet<>();
 
@@ -58,15 +49,10 @@ public class Solver {
             result.addAll(allPred(p));
         }
 
-        return limPredecessors[node] = result;
+        return result;
     }
 
     public Set<Integer> allSucc(int node) {
-        Set<Integer> lim = limSuccessors[node];
-
-        if (lim != null)
-            return lim;
-
         List<Integer> succ = successors[node];
         Set<Integer> result = new HashSet<>();
 
@@ -75,7 +61,7 @@ public class Solver {
             result.addAll(allSucc(s));
         }
 
-        return limSuccessors[node] = result;
+        return result;
     }
 
     public int[] solve() {
