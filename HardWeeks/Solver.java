@@ -1,12 +1,14 @@
-package HardWeeks;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
+/**
+ * @author Miguel Valido 60477
+ * @author Pedro Fernandes 60694
+ */
 public class Solver {
-    private int hardWeekLimit;
+    private final int hardWeekLimit;
 
     private List<Integer>[] suc;
     private int[] pred;
@@ -27,35 +29,40 @@ public class Solver {
     }
 
     public int[] solve() {
-        int maxNumberOfTasksInWeek = 0;
-        int numberOfHardWeeks = 0;
-        Queue<Integer> bag = new LinkedList<Integer>();
+        int maxTasksInWeek = 0;
+        int hardWeeks = 0;
+
+        Queue<Integer> bag1 = new LinkedList<Integer>();
         Queue<Integer> bag2 = new LinkedList<Integer>();
+
         for (int i = 0; i < pred.length; i++) {
             if (pred[i] == 0)
-                bag.add(i);
+                bag1.add(i);
         }
-        if (bag.size() > hardWeekLimit)
-            numberOfHardWeeks++;
-        if (bag.size() > maxNumberOfTasksInWeek)
-            maxNumberOfTasksInWeek = bag.size();
-        do {
-            while (!bag.isEmpty()) {
-                int task = bag.remove();
+
+        while (!bag1.isEmpty()) {
+            if (bag1.size() > hardWeekLimit)
+                hardWeeks++;
+
+            if (bag1.size() > maxTasksInWeek)
+                maxTasksInWeek = bag1.size();
+
+            while (!bag1.isEmpty()) {
+                int task = bag1.remove();
+
                 for (int suc : suc[task]) {
                     pred[suc]--;
+
                     if (pred[suc] == 0)
                         bag2.add(suc);
                 }
             }
-            if (bag2.size() > hardWeekLimit)
-                numberOfHardWeeks++;
-            if (bag2.size() > maxNumberOfTasksInWeek)
-                maxNumberOfTasksInWeek = bag2.size();
-            Queue<Integer> temp = bag;
-            bag = bag2;
-            bag2 = temp;
-        } while (!bag.isEmpty());
-        return new int[] { maxNumberOfTasksInWeek, numberOfHardWeeks };
+
+            Queue<Integer> bagt = bag1;
+            bag1 = bag2;
+            bag2 = bagt;
+        }
+
+        return new int[] { maxTasksInWeek, hardWeeks };
     }
 }
