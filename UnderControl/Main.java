@@ -12,7 +12,7 @@ public class Main {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
             int[] line = readInts(in);
 
-            Solver solver = new Solver(line[0]);
+            Solver solver = new Solver(line[0], line[1]);
             int numOfTasks = line[1];
 
             while (numOfTasks-- > 0) {
