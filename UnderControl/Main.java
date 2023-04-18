@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Miguel Valido 60477
@@ -20,9 +21,10 @@ public class Main {
                 solver.addEdge(line[0], line[1], line[2]);
             }
 
-            int[] solution = solver.solve();
-
-            System.out.println(solution[0] + " " + solution[1]);
+            List<Solver.Edge> solution = solver.solve();
+            System.out.println(solution.size());
+            for (Solver.Edge edge : solution)
+                System.out.println(edge.getPrecedent() + " " + edge.getSuccessor());
         }
     }
 
