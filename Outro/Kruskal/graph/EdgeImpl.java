@@ -1,18 +1,18 @@
 package graph;
 
-public class EdgeImpl<L> implements Edge<L> {
-    private L label;
+public class EdgeImpl<T> implements Edge<T> {
+    private T label;
     private int node1;
     private int node2;
 
-    public EdgeImpl(int node1, int node2, L label) {
+    public EdgeImpl(int node1, int node2, T label) {
         this.node1 = node1;
         this.node2 = node2;
         this.label = label;
     }
 
     @Override
-    public L label() {
+    public T label() {
         return label;
     }
 

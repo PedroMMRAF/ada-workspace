@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.stream.IntStream;
 
-public class UndiGraphImpl<L> implements UndiGraph<L> {
+public class UndiGraphImpl<T> implements UndiGraph<T> {
     private int nodes;
-    private List<Edge<L>> edges;
-    private List<Edge<L>>[] incidentEdges;
+    private List<Edge<T>> edges;
+    private List<Edge<T>>[] incidentEdges;
 
     @SuppressWarnings("unchecked")
     public UndiGraphImpl(int nodes) {
@@ -32,8 +32,8 @@ public class UndiGraphImpl<L> implements UndiGraph<L> {
     }
 
     @Override
-    public Edge<L> addEdge(int node1, int node2, L label) {
-        Edge<L> edge = new EdgeImpl<>(node1, node2, label);
+    public Edge<T> addEdge(int node1, int node2, T label) {
+        Edge<T> edge = new EdgeImpl<>(node1, node2, label);
 
         this.edges.add(edge);
         this.incidentEdges[node1].add(edge);
@@ -42,15 +42,15 @@ public class UndiGraphImpl<L> implements UndiGraph<L> {
         return edge;
     }
 
-    private boolean makesEdge(int node1, int node2, Edge<L> edge) {
-        return (edge.firstNode() == node1 || edge.firstNode() == node2)
-                && (edge.secondNode() == node1 || edge.secondNode() == node2);
+    private boolean isEdge(int node1, int node2, Edge<T> edge) {
+        return (edge.firstNode() == node1 && edge.secondNode() == node2)
+                || (edge.firstNode() == node2 && edge.secondNode() == node1);
     }
 
     @Override
     public boolean edgeExists(int node1, int node2) {
-        for (Edge<L> edge : edges) {
-            if (makesEdge(node1, node2, edge))
+        for (Edge<T> edge : edges) {
+            if (isEdge(node1, node2, edge))
                 return true;
         }
         return false;
@@ -62,7 +62,7 @@ public class UndiGraphImpl<L> implements UndiGraph<L> {
     }
 
     @Override
-    public Iterable<Edge<L>> edges() {
+    public Iterable<Edge<T>> edges() {
         return () -> edges.iterator();
     }
 
@@ -74,7 +74,7 @@ public class UndiGraphImpl<L> implements UndiGraph<L> {
     @Override
     public Iterable<Integer> adjacentNodes(int node) {
         return () -> new Iterator<Integer>() {
-            private Iterator<Edge<L>> underlying = incidentEdges[node].iterator();
+            private Iterator<Edge<T>> underlying = incidentEdges[node].iterator();
 
             @Override
             public boolean hasNext() {
@@ -93,7 +93,7 @@ public class UndiGraphImpl<L> implements UndiGraph<L> {
     }
 
     @Override
-    public Iterable<Edge<L>> incidentEdges(int node) {
+    public Iterable<Edge<T>> incidentEdges(int node) {
         return () -> incidentEdges[node].iterator();
     }
 }

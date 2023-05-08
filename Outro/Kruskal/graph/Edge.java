@@ -1,10 +1,10 @@
 package graph;
 
-public interface Edge<LL> {
+public interface Edge<T> {
     /**
      * @return The edge's label.
      */
-    LL label();
+    T label();
 
     /**
      * @return The edge's origin node.

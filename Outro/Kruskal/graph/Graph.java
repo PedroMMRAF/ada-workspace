@@ -1,6 +1,6 @@
 package graph;
 
-public interface AnyGraph<L> {
+public interface Graph<T> {
     /**
      * @return The number of nodes this graph has.
      */
@@ -19,7 +19,7 @@ public interface AnyGraph<L> {
      * @param label The node's label
      * @return The created edge.
      */
-    Edge<L> addEdge(int node1, int node2, L label);
+    Edge<T> addEdge(int node1, int node2, T label);
 
     /**
      * @param node1 The origin node
@@ -36,5 +36,5 @@ public interface AnyGraph<L> {
     /**
      * @return An iterable of all edges.
      */
-    Iterable<Edge<L>> edges();
+    Iterable<Edge<T>> edges();
 }
