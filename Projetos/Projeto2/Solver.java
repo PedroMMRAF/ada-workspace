@@ -2,54 +2,52 @@ import java.util.Queue;
 import java.util.LinkedList;
 
 public class Solver {
-    private static class Node {
-        public int x;
-        public int y;
-        public boolean dir;
-
-        public Node(int x, int y, boolean dir) {
-            this.x = x;
-            this.y = y;
-            this.dir = dir;
-        }
-    }
-
     private static char EMPTY = '.';
     private static char HOLE = 'H';
 
+    private static int ENCODE = 1000;
+
     private char[][] field;
 
-    private Queue<Node> ready;
-    private Queue<Node> waiting;
+    private Queue<Integer> ready;
+    private Queue<Integer> waiting;
+    private boolean[][] reached;
 
     public Solver(char[][] field) {
         this.field = field;
+
+        this.ready = new LinkedList<>();
+        this.waiting = new LinkedList<>();
+        this.reached = new boolean[field.length][field[0].length];
+    }
+
+    private void reset() {
+        ready.clear();
+        waiting.clear();
+
+        for (int i = 0; i < reached.length; i++)
+            for (int j = 0; j < reached[0].length; j++)
+                reached[i][j] = false;
     }
 
     public int solve(int sX, int sY) {
-        ready = new LinkedList<>();
-        waiting = new LinkedList<>();
+        reset();
+
+        reached[sY][sX] = true;
+        ready.add(encode(sX, sY, false));
+        ready.add(encode(sX, sY, true));
 
         int height = 1;
-        boolean[][] traveled = new boolean[field.length][field[0].length];
-
-        ready.add(new Node(sX, sY, false));
-        ready.add(new Node(sX, sY, true));
 
         while (!ready.isEmpty()) {
             while (!ready.isEmpty()) {
-                Node pos = ready.remove();
+                int pos = ready.remove();
 
-                if (traveled[pos.y][pos.x] && height > 1)
-                    continue;
-
-                traveled[pos.y][pos.x] = true;
-
-                if (trace(pos))
+                if (tracePath(pos, -1) || tracePath(pos, 1))
                     return height;
             }
 
-            Queue<Node> swap = waiting;
+            Queue<Integer> swap = waiting;
             waiting = ready;
             ready = swap;
 
@@ -59,19 +57,13 @@ public class Solver {
         return -1;
     }
 
-    private boolean trace(Node pos) {
-        for (int i = -1; i <= 1; i += 2)
-            if (trace(pos, i))
-                return true;
+    private boolean tracePath(int pos, int sign) {
+        int x = getX(pos);
+        int y = getY(pos);
+        boolean horz = isHorz(pos);
 
-        return false;
-    }
-
-    private boolean trace(Node pos, int sign) {
-        int x = pos.x;
-        int y = pos.y;
-        int dx = pos.dir ? sign : 0;
-        int dy = pos.dir ? 0 : sign;
+        int dx = horz ? sign : 0;
+        int dy = horz ? 0 : sign;
 
         while (isInBounds(x, y) && isEmpty(x, y)) {
             x += dx;
@@ -84,10 +76,18 @@ public class Solver {
         if (isHole(x, y))
             return true;
 
-        waiting.add(new Node(x - dx, y - dy, !pos.dir));
+        x -= dx;
+        y -= dy;
+
+        if (!reached[y][x]) {
+            waiting.add(encode(x, y, !horz));
+            reached[y][x] = true;
+        }
 
         return false;
     }
+
+    // Field inspection
 
     private boolean isInBounds(int x, int y) {
         return 0 <= x && x < field[0].length
@@ -100,5 +100,26 @@ public class Solver {
 
     private boolean isHole(int x, int y) {
         return field[y][x] == HOLE;
+    }
+
+    // Node encoding and decoding
+
+    private int encode(int x, int y, boolean horz) {
+        int pos = 1 + x + y * ENCODE;
+        int sign = horz ? 1 : -1;
+
+        return sign * pos;
+    }
+
+    private int getX(int pos) {
+        return (Math.abs(pos) - 1) % ENCODE;
+    }
+
+    private int getY(int pos) {
+        return (Math.abs(pos) - 1) / ENCODE;
+    }
+
+    private boolean isHorz(int pos) {
+        return pos > 0;
     }
 }

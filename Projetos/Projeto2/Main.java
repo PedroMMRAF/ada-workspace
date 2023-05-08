@@ -33,7 +33,7 @@ public class Main {
 
         int result = solver.solve(line[1] - 1, line[0] - 1);
 
-        System.out.println(result != -1 ? result : STUCK);
+        System.out.println(result == -1 ? STUCK : result);
     }
 
     private static char[][] readCharMatrix(BufferedReader reader, int rows, int cols) throws IOException {
