@@ -69,9 +69,6 @@ public class Solver {
         if (isHole(x + dx, y + dy))
             return true;
 
-        x += dx;
-        y += dy;
-
         if (!reached[y][x]) {
             waiting.add(encode(x, y, !horz));
             reached[y][x] = true;
