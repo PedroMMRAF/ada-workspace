@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Solver {
+    public static Counter ITERS = new Counter();
+
     private static char EMPTY = '.';
     private static char HOLE = 'H';
 
@@ -69,6 +71,7 @@ public class Solver {
 
         if (node != null) {
             for (int endPos : nodeSuccessors.get(node)) {
+                ITERS.add();
                 int x = getX(endPos);
                 int y = getY(endPos);
 
@@ -95,23 +98,26 @@ public class Solver {
         int x = getX(pos);
         int y = getY(pos);
 
-        while (isInBounds(x, y) && isEmpty(x, y)) {
+        while (isInBounds(x + dx, y + dy) && isEmpty(x + dx, y + dy)) {
+            ITERS.add();
+            reached[y][x] = true;
             x += dx;
             y += dy;
         }
 
-        if (!isInBounds(x, y))
+        if (!isInBounds(x + dx, y + dy))
             return false;
 
-        if (isHole(x, y)) {
-            addEdge(pos, encode(x, y));
+        if (isHole(x + dx, y + dy)) {
+            addEdge(pos, encode(x + dx, y + dy));
             return true;
         }
 
-        x -= dx;
-        y -= dy;
-
         int endPos = encode(x, y);
+
+        if (pos == endPos)
+            return false;
+
         addEdge(pos, endPos);
 
         if (!reached[y][x]) {
@@ -121,6 +127,8 @@ public class Solver {
 
         return false;
     }
+
+    // Graph methods
 
     private void addEdge(int pos1, int pos2) {
         nodeSuccessors.get(getNode(pos1)).add(pos2);

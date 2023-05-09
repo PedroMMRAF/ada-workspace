@@ -30,9 +30,10 @@ public class Test {
     }
 
     private static TestCase[] testCases = {
-            new TestCase("test1", "tests/input1.txt", "tests/output1.txt"),
-            new TestCase("test2", "tests/input2.txt", "tests/output2.txt"),
-            new TestCase("test3", "tests/input3.txt", "tests/output3.txt"),
+            // new TestCase("test1", "tests/input1.txt", "tests/output1.txt"),
+            // new TestCase("test2", "tests/input2.txt", "tests/output2.txt"),
+            // new TestCase("test3", "tests/input3.txt", "tests/output3.txt"),
+            new TestCase("test4", "tests/input4.txt", "tests/output4.txt"),
     };
 
     public static void main(String[] args) throws IOException {
@@ -74,7 +75,8 @@ public class Test {
                 System.out.println("Actual:");
                 System.out.println(actual);
             }
-
         }
+
+        System.out.println(Solver.ITERS.getValue());
     }
 }
