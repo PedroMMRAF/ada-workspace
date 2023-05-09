@@ -26,7 +26,6 @@ public class Solver {
     public int solve(int sX, int sY) {
         reset();
 
-        reached[sY][sX] = true;
         ready.add(encode(sX, sY, false));
         ready.add(encode(sX, sY, true));
 
@@ -58,19 +57,20 @@ public class Solver {
         int dx = horz ? sign : 0;
         int dy = horz ? 0 : sign;
 
-        while (isInBounds(x, y) && isEmpty(x, y)) {
+        while (isInBounds(x + dx, y + dy) && isEmpty(x + dx, y + dy)) {
+            reached[y][x] = true;
             x += dx;
             y += dy;
         }
 
-        if (!isInBounds(x, y))
+        if (!isInBounds(x + dx, y + dy))
             return false;
 
-        if (isHole(x, y))
+        if (isHole(x + dx, y + dy))
             return true;
 
-        x -= dx;
-        y -= dy;
+        x += dx;
+        y += dy;
 
         if (!reached[y][x]) {
             waiting.add(encode(x, y, !horz));
