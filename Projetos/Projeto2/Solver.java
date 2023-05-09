@@ -26,7 +26,6 @@ public class Solver {
     public int solve(int sX, int sY) {
         reset();
 
-        reached[sY][sX] = true;
         ready.add(encode(sX, sY, false));
         ready.add(encode(sX, sY, true));
 
