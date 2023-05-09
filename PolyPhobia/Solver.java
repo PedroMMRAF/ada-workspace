@@ -1,49 +1,8 @@
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.awt.Point;
 
 public class Solver {
-    private class Point implements Serializable {
-        private int a;
-        private int b;
-
-        public Point(int a, int b) {
-            this.a = a;
-            this.b = b;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getEnclosingInstance().hashCode();
-            result = prime * result + a;
-            result = prime * result + b;
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            Point other = (Point) obj;
-            if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
-                return false;
-            if (a != other.a)
-                return false;
-            if (b != other.b)
-                return false;
-            return true;
-        }
-
-        private Solver getEnclosingInstance() {
-            return Solver.this;
-        }
-    }
 
     private Map<Point, Point> partition;
     private int segments;
@@ -91,5 +50,4 @@ public class Solver {
     public int result() {
         return segments;
     }
-
 }
