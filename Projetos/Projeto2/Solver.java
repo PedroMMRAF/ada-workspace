@@ -15,19 +15,12 @@ public class Solver {
 
     public Solver(char[][] field) {
         this.field = field;
-
-        this.ready = new LinkedList<>();
-        this.waiting = new LinkedList<>();
-        this.reached = new boolean[field.length][field[0].length];
     }
 
     private void reset() {
-        ready.clear();
-        waiting.clear();
-
-        for (int i = 0; i < reached.length; i++)
-            for (int j = 0; j < reached[0].length; j++)
-                reached[i][j] = false;
+        this.ready = new LinkedList<>();
+        this.waiting = new LinkedList<>();
+        this.reached = new boolean[field.length][field[0].length];
     }
 
     public int solve(int sX, int sY) {
