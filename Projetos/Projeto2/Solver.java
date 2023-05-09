@@ -58,19 +58,17 @@ public class Solver {
         int dx = horz ? sign : 0;
         int dy = horz ? 0 : sign;
 
-        while (isInBounds(x, y) && isEmpty(x, y)) {
+        while (isInBounds(x + dx, y + dy) && isEmpty(x + dx, y + dy)) {
+            reached[y][x] = true;
             x += dx;
             y += dy;
         }
 
-        if (!isInBounds(x, y))
+        if (!isInBounds(x + dx, y + dy))
             return false;
 
-        if (isHole(x, y))
+        if (isHole(x + dx, y + dy))
             return true;
-
-        x -= dx;
-        y -= dy;
 
         if (!reached[y][x]) {
             waiting.add(encode(x, y, !horz));
