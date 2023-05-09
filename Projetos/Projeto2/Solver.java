@@ -1,11 +1,20 @@
 import java.util.Queue;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Solver {
     private static char EMPTY = '.';
     private static char HOLE = 'H';
 
-    private static int ENCODE = 1000;
+    private int[][] DIRECTIONS = new int[][] {
+            { 1, 0 },
+            { -1, 0 },
+            { 0, 1 },
+            { 0, -1 }
+    };
 
     private char[][] field;
 
@@ -13,8 +22,14 @@ public class Solver {
     private Queue<Integer> waiting;
     private boolean[][] reached;
 
+    private Map<Integer, Integer> nodeMap;
+    private List<List<Integer>> nodeSuccessors;
+
     public Solver(char[][] field) {
         this.field = field;
+
+        this.nodeMap = new HashMap<>();
+        this.nodeSuccessors = new ArrayList<>();
     }
 
     private void reset() {
@@ -26,8 +41,8 @@ public class Solver {
     public int solve(int sX, int sY) {
         reset();
 
-        ready.add(encode(sX, sY, false));
-        ready.add(encode(sX, sY, true));
+        reached[sY][sX] = true;
+        ready.add(encode(sX, sY));
 
         int height = 1;
 
@@ -35,7 +50,7 @@ public class Solver {
             while (!ready.isEmpty()) {
                 int pos = ready.remove();
 
-                if (tracePath(pos, -1) || tracePath(pos, 1))
+                if (tracePaths(pos))
                     return height;
             }
 
@@ -49,32 +64,75 @@ public class Solver {
         return -1;
     }
 
-    private boolean tracePath(int pos, int sign) {
+    private boolean tracePaths(int pos) {
+        Integer node = nodeMap.get(pos);
+
+        if (node != null) {
+            for (int endPos : nodeSuccessors.get(node)) {
+                int x = getX(endPos);
+                int y = getY(endPos);
+
+                if (isHole(x, y))
+                    return true;
+
+                if (!reached[y][x]) {
+                    waiting.add(endPos);
+                    reached[y][x] = true;
+                }
+            }
+
+            return false;
+        }
+
+        for (int[] dir : DIRECTIONS)
+            if (tracePath(pos, dir[0], dir[1]))
+                return true;
+
+        return false;
+    }
+
+    private boolean tracePath(int pos, int dx, int dy) {
         int x = getX(pos);
         int y = getY(pos);
-        boolean horz = isHorz(pos);
 
-        int dx = horz ? sign : 0;
-        int dy = horz ? 0 : sign;
-
-        while (isInBounds(x + dx, y + dy) && isEmpty(x + dx, y + dy)) {
-            reached[y][x] = true;
+        while (isInBounds(x, y) && isEmpty(x, y)) {
             x += dx;
             y += dy;
         }
 
-        if (!isInBounds(x + dx, y + dy))
+        if (!isInBounds(x, y))
             return false;
 
-        if (isHole(x + dx, y + dy))
+        if (isHole(x, y)) {
+            addEdge(pos, encode(x, y));
             return true;
+        }
+
+        x -= dx;
+        y -= dy;
+
+        int endPos = encode(x, y);
+        addEdge(pos, endPos);
 
         if (!reached[y][x]) {
-            waiting.add(encode(x, y, !horz));
+            waiting.add(endPos);
             reached[y][x] = true;
         }
 
         return false;
+    }
+
+    private void addEdge(int pos1, int pos2) {
+        nodeSuccessors.get(getNode(pos1)).add(pos2);
+    }
+
+    private int getNode(int pos) {
+        if (!nodeMap.containsKey(pos)) {
+            nodeMap.put(pos, nodeMap.size());
+            nodeSuccessors.add(new LinkedList<>());
+        }
+
+        return nodeMap.get(pos);
     }
 
     // Field inspection
@@ -94,22 +152,15 @@ public class Solver {
 
     // Node encoding and decoding
 
-    private int encode(int x, int y, boolean horz) {
-        int pos = 1 + x + y * ENCODE;
-        int sign = horz ? 1 : -1;
-
-        return sign * pos;
+    private int encode(int x, int y) {
+        return 1 + x + y * 1000;
     }
 
     private int getX(int pos) {
-        return (Math.abs(pos) - 1) % ENCODE;
+        return (pos - 1) % 1000;
     }
 
     private int getY(int pos) {
-        return (Math.abs(pos) - 1) / ENCODE;
-    }
-
-    private boolean isHorz(int pos) {
-        return pos > 0;
+        return (pos - 1) / 1000;
     }
 }
