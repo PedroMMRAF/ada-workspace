@@ -1,174 +1,154 @@
-import java.util.Queue;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Queue;
+import java.util.LinkedList;
 
+/**
+ * @author Miguel Valido 60477
+ * @author Pedro Fernandes 60694
+ */
 public class Solver {
-    public static Counter ITERS = new Counter();
+    public static final char EMPTY = '.';
+    public static final char HOLE = 'H';
 
-    private static char EMPTY = '.';
-    private static char HOLE = 'H';
-
-    private int[][] DIRECTIONS = new int[][] {
-            { 1, 0 },
-            { -1, 0 },
-            { 0, 1 },
-            { 0, -1 }
-    };
+    public static final int STUCK = -1;
 
     private char[][] field;
+    private List<Integer>[][] skipGraph;
 
     private Queue<Integer> ready;
     private Queue<Integer> waiting;
     private boolean[][] reached;
 
-    private Map<Integer, Integer> nodeMap;
-    private List<List<Integer>> nodeSuccessors;
-
+    @SuppressWarnings("unchecked")
     public Solver(char[][] field) {
         this.field = field;
-
-        this.nodeMap = new HashMap<>();
-        this.nodeSuccessors = new ArrayList<>();
+        this.skipGraph = new List[field.length][field[0].length];
     }
 
     private void reset() {
-        this.ready = new LinkedList<>();
-        this.waiting = new LinkedList<>();
-        this.reached = new boolean[field.length][field[0].length];
+        ready = new LinkedList<>();
+        waiting = new LinkedList<>();
+        reached = new boolean[field.length][field[0].length];
     }
 
-    public int solve(int sX, int sY) {
+    public int solve(int x, int y) {
+        int height = 1;
         reset();
 
-        reached[sY][sX] = true;
-        ready.add(encode(sX, sY));
-
-        int height = 1;
+        reached[x][y] = true;
+        ready.add(encode(x, y));
 
         while (!ready.isEmpty()) {
             while (!ready.isEmpty()) {
-                int pos = ready.remove();
+                int next = ready.remove();
 
-                if (tracePaths(pos))
+                if (processNode(next))
                     return height;
             }
 
-            Queue<Integer> swap = waiting;
-            waiting = ready;
-            ready = swap;
+            Queue<Integer> temp = ready;
+            ready = waiting;
+            waiting = temp;
 
             height++;
         }
 
-        return -1;
+        return STUCK;
     }
 
-    private boolean tracePaths(int pos) {
-        Integer node = nodeMap.get(pos);
+    private boolean processNode(int node) {
+        List<Integer> successors = skipGraph[getX(node)][getY(node)];
 
-        if (node != null) {
-            for (int endPos : nodeSuccessors.get(node)) {
-                ITERS.add();
-                int x = getX(endPos);
-                int y = getY(endPos);
+        if (successors == null)
+            return tracePaths(node);
 
-                if (isHole(x, y))
-                    return true;
+        for (int successor : successors) {
+            int row = getX(successor);
+            int col = getY(successor);
 
-                if (!reached[y][x]) {
-                    waiting.add(endPos);
-                    reached[y][x] = true;
-                }
-            }
-
-            return false;
-        }
-
-        for (int[] dir : DIRECTIONS)
-            if (tracePath(pos, dir[0], dir[1]))
+            if (isHole(row, col))
                 return true;
+
+            if (!reached[row][col]) {
+                waiting.add(successor);
+                reached[row][col] = true;
+            }
+        }
 
         return false;
     }
 
-    private boolean tracePath(int pos, int dx, int dy) {
-        int x = getX(pos);
-        int y = getY(pos);
+    private boolean tracePaths(int node) {
+        return tracePath(node, -1, 0) || tracePath(node, 1, 0)
+                || tracePath(node, 0, -1) || tracePath(node, 0, 1);
 
-        while (isInBounds(x + dx, y + dy) && isEmpty(x + dx, y + dy)) {
-            ITERS.add();
-            reached[y][x] = true;
+    }
+
+    private boolean tracePath(int start, int dx, int dy) {
+        int x = getX(start);
+        int y = getY(start);
+
+        while (isInBounds(x, y) && isEmpty(x, y)) {
             x += dx;
             y += dy;
         }
 
-        if (!isInBounds(x + dx, y + dy))
+        if (!isInBounds(x, y))
             return false;
 
-        if (isHole(x + dx, y + dy)) {
-            addEdge(pos, encode(x + dx, y + dy));
+        if (isHole(x, y)) {
+            addSkip(start, encode(x, y));
             return true;
         }
 
-        int endPos = encode(x, y);
+        x -= dx;
+        y -= dy;
 
-        if (pos == endPos)
-            return false;
+        addSkip(start, encode(x, y));
 
-        addEdge(pos, endPos);
-
-        if (!reached[y][x]) {
-            waiting.add(endPos);
-            reached[y][x] = true;
+        if (!reached[x][y]) {
+            waiting.add(encode(x, y));
+            reached[x][y] = true;
         }
 
         return false;
     }
 
-    // Graph methods
+    private void addSkip(int start, int end) {
+        int x = getX(start);
+        int y = getY(start);
 
-    private void addEdge(int pos1, int pos2) {
-        nodeSuccessors.get(getNode(pos1)).add(pos2);
+        if (skipGraph[x][y] == null)
+            skipGraph[x][y] = new LinkedList<>();
+
+        skipGraph[x][y].add(end);
     }
 
-    private int getNode(int pos) {
-        if (!nodeMap.containsKey(pos)) {
-            nodeMap.put(pos, nodeMap.size());
-            nodeSuccessors.add(new LinkedList<>());
-        }
-
-        return nodeMap.get(pos);
-    }
-
-    // Field inspection
+    // Field checking
 
     private boolean isInBounds(int x, int y) {
-        return 0 <= x && x < field[0].length
-                && 0 <= y && y < field.length;
+        return 0 <= x && x < field.length && 0 <= y && y < field[0].length;
     }
 
     private boolean isEmpty(int x, int y) {
-        return field[y][x] == EMPTY;
+        return field[x][y] == EMPTY;
     }
 
     private boolean isHole(int x, int y) {
-        return field[y][x] == HOLE;
+        return field[x][y] == HOLE;
     }
 
     // Node encoding and decoding
 
     private int encode(int x, int y) {
-        return 1 + x + y * 1000;
+        return x + y * field.length;
     }
 
-    private int getX(int pos) {
-        return (pos - 1) % 1000;
+    private int getX(int encoded) {
+        return encoded % field.length;
     }
 
-    private int getY(int pos) {
-        return (pos - 1) / 1000;
+    private int getY(int encoded) {
+        return encoded / field.length;
     }
 }

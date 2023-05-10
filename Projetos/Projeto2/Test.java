@@ -5,34 +5,10 @@ import java.io.*;
  * @author Pedro Fernandes 60694
  */
 public class Test {
-    private static class TestCase {
-        private String name;
-        private String input;
-        private String output;
-
-        public TestCase(String name, String input, String output) {
-            this.name = name;
-            this.input = input;
-            this.output = output;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public InputStream getInputStream() {
-            return TestCase.class.getResourceAsStream(input);
-        }
-
-        public InputStream getOutputStream() {
-            return TestCase.class.getResourceAsStream(output);
-        }
-    }
-
     private static TestCase[] testCases = {
-            // new TestCase("test1", "tests/input1.txt", "tests/output1.txt"),
-            // new TestCase("test2", "tests/input2.txt", "tests/output2.txt"),
-            // new TestCase("test3", "tests/input3.txt", "tests/output3.txt"),
+            new TestCase("test1", "tests/input1.txt", "tests/output1.txt"),
+            new TestCase("test2", "tests/input2.txt", "tests/output2.txt"),
+            new TestCase("test3", "tests/input3.txt", "tests/output3.txt"),
             new TestCase("test4", "tests/input4.txt", "tests/output4.txt"),
     };
 
@@ -76,7 +52,29 @@ public class Test {
                 System.out.println(actual);
             }
         }
+    }
 
-        System.out.println(Solver.ITERS.getValue());
+    private static class TestCase {
+        private String name;
+        private String input;
+        private String output;
+
+        public TestCase(String name, String input, String output) {
+            this.name = name;
+            this.input = input;
+            this.output = output;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public InputStream getInputStream() {
+            return TestCase.class.getResourceAsStream(input);
+        }
+
+        public InputStream getOutputStream() {
+            return TestCase.class.getResourceAsStream(output);
+        }
     }
 }
