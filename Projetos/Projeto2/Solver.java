@@ -62,6 +62,10 @@ public class Solver {
         if (successors == null)
             return tracePaths(node);
 
+        return skipTrace(successors);
+    }
+
+    private boolean skipTrace(List<Integer> successors) {
         for (int successor : successors) {
             int row = getX(successor);
             int col = getY(successor);
@@ -81,7 +85,6 @@ public class Solver {
     private boolean tracePaths(int node) {
         return tracePath(node, -1, 0) || tracePath(node, 1, 0)
                 || tracePath(node, 0, -1) || tracePath(node, 0, 1);
-
     }
 
     private boolean tracePath(int start, int dx, int dy) {
