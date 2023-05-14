@@ -21,6 +21,8 @@ public class Solver {
         }
     }
 
+    private static int SOURCE = 0;
+
     private int sink;
     private int[] departures;
 
@@ -40,7 +42,7 @@ public class Solver {
     public void addRegion(int i, int population, int departure) {
         departures[i++] = departure;
 
-        addEdge(0, i, population);
+        addEdge(SOURCE, i, population);
         addEdge(i, departures.length + i, departure);
     }
 
@@ -70,7 +72,7 @@ public class Solver {
 
             int node = sink;
 
-            while (node != 0) {
+            while (node != SOURCE) {
                 int origin = via[node];
 
                 flow[origin][node] += increment;
@@ -89,10 +91,10 @@ public class Solver {
         boolean[] found = new boolean[network.length];
         int[] pathIncrement = new int[network.length];
 
-        waiting.add(0);
-        found[0] = true;
-        via[0] = 0;
-        pathIncrement[0] = Integer.MAX_VALUE;
+        waiting.add(SOURCE);
+        found[SOURCE] = true;
+        via[SOURCE] = 0;
+        pathIncrement[SOURCE] = Integer.MAX_VALUE;
 
         while (!waiting.isEmpty()) {
             int origin = waiting.remove();
