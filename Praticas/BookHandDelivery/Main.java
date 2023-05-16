@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
+    private static final String IMPOSSIBLE = "impossible";
+
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             int people = Integer.parseInt(reader.readLine());
@@ -26,7 +28,8 @@ public class Main {
                 int start = Integer.parseInt(line[0]);
                 int end = Integer.parseInt(line[1]);
 
-                System.out.println(solver.solve(start, end));
+                int result = solver.solve(start, end);
+                System.out.println(result == Integer.MAX_VALUE ? IMPOSSIBLE : result);
             }
         }
     }
