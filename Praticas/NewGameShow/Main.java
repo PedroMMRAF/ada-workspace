@@ -9,7 +9,7 @@ public class Main {
             int R = Integer.parseInt(line[0]);
             int D = Integer.parseInt(line[1]);
 
-            Solver solver = new Solver(R, D);
+            Solver solver = new Solver(R);
 
             for (int d = 0; d < D; d++) {
                 line = reader.readLine().split(" ");
@@ -25,7 +25,9 @@ public class Main {
             int E = Integer.parseInt(line[1]);
             int I = Integer.parseInt(line[2]);
 
-            int solution = solver.solve(S, E, I);
+            System.out.println(solver.solve(S, E, I));
+        } catch (Bruh e) {
+            System.out.println("Out of budget");
         }
     }
 }
