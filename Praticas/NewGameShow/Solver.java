@@ -25,7 +25,7 @@ public class Solver {
         if (change > 0)
             throw new Bruh();
 
-        return budget + change;
+        return Math.max(budget + change, 0);
     }
 
     private int bellmanFord(int start, int goal) throws Bruh {
@@ -39,7 +39,7 @@ public class Solver {
         via[start] = start;
 
         boolean changes = false;
-        for (int i = 0; i < graph.length; i++) {
+        for (int i = 1; i < graph.length; i++) {
             changes = updateLenghts(length, via);
             if (!changes || length[goal] < 0)
                 break;
@@ -48,7 +48,7 @@ public class Solver {
         if (changes && updateLenghts(length, via))
             throw new Bruh();
 
-        return (int) length[goal];
+        return length[goal];
     }
 
     private boolean updateLenghts(int[] length, int[] via) {
